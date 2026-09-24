@@ -1,158 +1,143 @@
+import { useMemo, useState } from "react";
 import "./styles.css";
+import { ExamForm } from "./components/ExamForm";
+import { RecordList } from "./components/RecordList";
+import { SEED_PATIENTS } from "./data";
+import { computeStats } from "./stats";
+import { loadRecords, saveRecord } from "./storage";
+import { LENS_TYPES, PATIENT_GROUPS, type LensType, type PatientGroup } from "./types";
 
-const project = {
-  "id": "hxwl-11",
-  "port": 5111,
-  "title": "眼科验光记录",
-  "subtitle": "视力、屈光参数与复查处方对比",
-  "stack": "React + Vite + TypeScript + CSS",
-  "theme": [
-    "#2563eb",
-    "#059669",
-    "#dc2626"
-  ],
-  "domain": "眼视光",
-  "users": [
-    "验光师",
-    "门店顾问",
-    "复查医生"
-  ],
-  "metrics": [
-    "近视进展",
-    "散光变化",
-    "复查提醒",
-    "处方数量"
-  ],
-  "filters": [
-    "儿童",
-    "成人",
-    "渐进片",
-    "角膜塑形镜"
-  ],
-  "fields": [
-    "裸眼视力",
-    "矫正视力",
-    "球镜",
-    "柱镜",
-    "轴位",
-    "瞳距",
-    "角膜曲率"
-  ],
-  "records": [
-    [
-      "Patient-032",
-      "儿童近视",
-      "复查",
-      "右眼-2.75DS，轴位180"
-    ],
-    [
-      "Patient-081",
-      "渐进片",
-      "初配",
-      "ADD +1.50，瞳高待确认"
-    ],
-    [
-      "Patient-144",
-      "散光",
-      "复查",
-      "柱镜变化0.50D"
-    ]
-  ]
-};
+type GroupFilter = PatientGroup | "全部";
+type LensFilter = LensType | "全部";
 
-const statusColors = ["status-ok", "status-watch", "status-danger"];
-
-function MetricCard({ label, value, index }: { label: string; value: string; index: number }) {
+function MetricCard({ label, value, hint }: { label: string; value: string; hint: string }) {
   return (
     <article className="metric-card">
       <span>{label}</span>
       <strong>{value}</strong>
-      <i className={statusColors[index % statusColors.length]} />
+      <p className="metric-hint">{hint}</p>
     </article>
   );
 }
 
+function FilterChips<T extends string>({
+  options,
+  value,
+  onSelect
+}: {
+  options: T[];
+  value: T;
+  onSelect: (v: T) => void;
+}) {
+  return (
+    <div className="chips muted filter-chips">
+      {options.map((option) => (
+        <button
+          key={option}
+          className={value === option ? "chip-active" : ""}
+          aria-pressed={value === option}
+          onClick={() => onSelect(option)}
+        >
+          {option}
+        </button>
+      ))}
+    </div>
+  );
+}
+
 function App() {
-  const values = project.metrics.map((metric: string, index: number) => {
-    const base = [84, 12, 31, 7][index % 4];
-    return String(base + index * 3);
-  });
+  const [records, setRecords] = useState(() => loadRecords());
+  const [groupFilter, setGroupFilter] = useState<GroupFilter>("全部");
+  const [lensFilter, setLensFilter] = useState<LensFilter>("全部");
+  const [showForm, setShowForm] = useState(true);
+
+  // 患者与镜片类型筛选继续可用；两组条件叠加
+  const filtered = useMemo(
+    () =>
+      records.filter(
+        (r) =>
+          (groupFilter === "全部" || r.group === groupFilter) &&
+          (lensFilter === "全部" || r.lensType === lensFilter)
+      ),
+    [records, groupFilter, lensFilter]
+  );
+
+  // 统计随记录（及筛选）实时更新；比较基准始终取全部记录，避免筛选后找不到上次
+  const stats = useMemo(() => computeStats(filtered, records), [filtered, records]);
+
+  function handleSave(draft: Omit<(typeof records)[number], "id" | "createdAt">) {
+    setRecords((current) => saveRecord(current, draft));
+  }
 
   return (
     <main className="app-shell">
       <section className="hero">
         <div>
-          <p className="eyebrow">{project.id} · port {project.port}</p>
-          <h1>{project.title}</h1>
-          <p className="subtitle">{project.subtitle}</p>
+          <p className="eyebrow">hxwl-11 · port 5111</p>
+          <h1>眼科验光记录</h1>
+          <p className="subtitle">
+            复查登记左右眼球镜、柱镜与轴位，自动与该患者同眼上次结果比较，变化超过 0.25D
+            时在列表中标出。
+          </p>
         </div>
         <div className="stack-card">
           <span>技术栈</span>
-          <strong>{project.stack}</strong>
+          <strong>React + Vite + TypeScript + CSS</strong>
+          <span className="stack-note">登记 / 比较 / 保存逻辑分层：registration · compare · storage</span>
         </div>
       </section>
 
       <section className="metrics-grid">
-        {project.metrics.map((metric: string, index: number) => (
-          <MetricCard key={metric} label={metric} value={values[index]} index={index} />
-        ))}
+        <MetricCard label="记录总数" value={String(stats.total)} hint="当前筛选范围内" />
+        <MetricCard label="复查次数" value={String(stats.rechecks)} hint="含与初配的对照" />
+        <MetricCard
+          label="变化超 0.25D"
+          value={String(stats.marked)}
+          hint="球镜或柱镜任一眼显著变化"
+        />
+        <MetricCard label="儿童记录" value={String(stats.children)} hint="近视进展重点关注" />
       </section>
 
       <section className="workspace">
         <aside className="panel narrow">
-          <h2>角色</h2>
-          <div className="chips">
-            {project.users.map((user: string) => (
-              <span key={user}>{user}</span>
-            ))}
-          </div>
-          <h2>筛选</h2>
-          <div className="chips muted">
-            {project.filters.map((filter: string) => (
-              <button key={filter}>{filter}</button>
-            ))}
-          </div>
+          <h2>患者筛选</h2>
+          <FilterChips
+            options={["全部", ...PATIENT_GROUPS] as GroupFilter[]}
+            value={groupFilter}
+            onSelect={setGroupFilter}
+          />
+          <h2>镜片类型</h2>
+          <FilterChips
+            options={["全部", ...LENS_TYPES] as LensFilter[]}
+            value={lensFilter}
+            onSelect={setLensFilter}
+          />
+          {(groupFilter !== "全部" || lensFilter !== "全部") && (
+            <button
+              className="clear-filters"
+              onClick={() => {
+                setGroupFilter("全部");
+                setLensFilter("全部");
+              }}
+            >
+              清除筛选
+            </button>
+          )}
         </aside>
 
-        <section className="panel">
-          <div className="section-heading">
-            <div>
-              <p>{project.domain}</p>
-              <h2>记录字段</h2>
-            </div>
-            <button className="primary-action">新增记录</button>
+        <div className="workspace-main">
+          <div className="form-switch">
+            <button className="primary-action" onClick={() => setShowForm((v) => !v)}>
+              {showForm ? "收起登记面板" : "新增复查登记"}
+            </button>
           </div>
-          <div className="field-grid">
-            {project.fields.map((field: string) => (
-              <label key={field}>
-                <span>{field}</span>
-                <input placeholder={"填写" + field} />
-              </label>
-            ))}
-          </div>
-        </section>
+          {showForm && (
+            <ExamForm patients={SEED_PATIENTS} records={records} onSave={handleSave} />
+          )}
+        </div>
       </section>
 
-      <section className="records panel">
-        <div className="section-heading">
-          <div>
-            <p>示例数据</p>
-            <h2>近期记录</h2>
-          </div>
-          <button>导出摘要</button>
-        </div>
-        <div className="record-list">
-          {project.records.map((record: string[], index: number) => (
-            <article key={record.join("-")} className="record-card">
-              <div className="record-index">{String(index + 1).padStart(2, "0")}</div>
-              <div>
-                <h3>{record[0]}</h3>
-                <p>{record.slice(1).join(" · ")}</p>
-              </div>
-            </article>
-          ))}
-        </div>
-      </section>
+      <RecordList records={filtered} allRecords={records} />
     </main>
   );
 }

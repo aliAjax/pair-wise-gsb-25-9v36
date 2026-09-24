@@ -228,11 +228,367 @@ input {
   gap: 12px;
 }
 
+/* ── 指标卡补充 ── */
+.metric-hint {
+  margin: 8px 0 0;
+  color: #64748b;
+  font-size: 12px;
+  line-height: 1.5;
+}
+
+/* ── 筛选 ── */
+.filter-chips button {
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+.filter-chips button.chip-active {
+  background: var(--primary);
+  border-color: var(--primary);
+  color: #ffffff;
+}
+
+.clear-filters {
+  width: 100%;
+  color: var(--primary);
+  border-color: color-mix(in srgb, var(--primary) 40%, var(--border));
+}
+
+.workspace-main {
+  display: grid;
+  gap: 14px;
+  align-content: start;
+}
+
+.form-switch {
+  display: flex;
+  justify-content: flex-end;
+}
+
+/* ── 登记表单 ── */
+.exam-form {
+  padding: 22px;
+}
+
+.save-toast {
+  align-self: center;
+  background: color-mix(in srgb, var(--accent) 12%, #ffffff);
+  color: var(--accent);
+  border: 1px solid color-mix(in srgb, var(--accent) 40%, var(--border));
+  border-radius: 999px;
+  padding: 6px 14px;
+  font-size: 13px;
+  white-space: nowrap;
+}
+
+.form-meta {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr)) 1.4fr;
+  gap: 14px;
+  margin-bottom: 14px;
+}
+
+select {
+  width: 100%;
+  min-height: 42px;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 0 10px;
+  background: #ffffff;
+  color: #172033;
+  font: inherit;
+}
+
+.prefill-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 13px;
+  color: #526070;
+  margin-bottom: 14px;
+}
+
+.link-button {
+  min-height: 30px;
+  padding: 0 10px;
+  border: none;
+  color: var(--primary);
+  text-decoration: underline;
+  background: transparent;
+}
+
+.eyes-row {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 14px;
+}
+
+.eye-block {
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 14px;
+  margin: 0;
+  background: #fbfdff;
+}
+
+.eye-block legend {
+  padding: 0 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.last-values {
+  color: #64748b;
+  font-size: 12px;
+  font-weight: 400;
+}
+
+.eye-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.field-changed input {
+  border-color: #f59e0b;
+  background: #fffbeb;
+}
+
+.change-badge {
+  margin-left: 8px;
+  font-style: normal;
+  font-size: 11px;
+  color: #b45309;
+  background: #fef3c7;
+  border-radius: 999px;
+  padding: 2px 8px;
+  white-space: nowrap;
+}
+
+.field-error {
+  color: var(--warn);
+  font-size: 12px;
+  line-height: 1.4;
+}
+
+input[aria-invalid="true"] {
+  border-color: var(--warn);
+  background: #fef2f2;
+}
+
+.form-actions {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin-top: 16px;
+}
+
+.form-error-summary {
+  font-size: 13px;
+}
+
+.stack-note {
+  font-size: 12px;
+}
+
+/* ── 记录列表 ── */
+.legend {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: #526070;
+  font-size: 13px;
+  white-space: nowrap;
+}
+
+.legend-dot {
+  display: inline-block;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+}
+
+.legend-dot.marked {
+  background: var(--warn);
+}
+
+.record-card {
+  grid-template-columns: 1fr;
+  border-left: 4px solid var(--border);
+}
+
+.record-card-marked {
+  border-left-color: var(--warn);
+  background: #fffdfa;
+}
+
+.record-head {
+  display: grid;
+  grid-template-columns: 46px 1fr auto;
+  gap: 14px;
+  align-items: center;
+}
+
+.record-index {
+  font-size: 14px;
+}
+
+.record-id h3 {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-bottom: 4px;
+  font-size: 16px;
+}
+
+.alert-pill {
+  font-style: normal;
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--warn);
+  background: #fee2e2;
+  border-radius: 999px;
+  padding: 3px 10px;
+}
+
+.alert-pill.small {
+  font-size: 11px;
+  padding: 2px 8px;
+  margin-left: 6px;
+}
+
+.history-toggle {
+  min-height: 34px;
+  font-size: 13px;
+}
+
+.eye-rows {
+  display: grid;
+  gap: 8px;
+  margin-top: 12px;
+}
+
+.eye-row {
+  display: grid;
+  grid-template-columns: 56px 1fr auto;
+  gap: 12px;
+  align-items: center;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 10px 12px;
+  font-size: 14px;
+}
+
+.eye-row-marked {
+  border-color: #fecaca;
+  background: #fef9f6;
+}
+
+.eye-name {
+  font-weight: 700;
+  color: #334155;
+}
+
+.eye-values {
+  font-variant-numeric: tabular-nums;
+}
+
+.eye-changes {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  color: #64748b;
+  font-size: 13px;
+  flex-wrap: wrap;
+}
+
+.change-tag {
+  border-radius: 999px;
+  padding: 2px 8px;
+  font-style: normal;
+  font-variant-numeric: tabular-nums;
+}
+
+.change-tag.marked {
+  color: var(--warn);
+  background: #fee2e2;
+  font-weight: 700;
+}
+
+.change-tag.minor {
+  color: #64748b;
+  background: #f1f5f9;
+}
+
+.change-tag.flat {
+  color: #94a3b8;
+  background: #f8fafc;
+}
+
+.no-baseline {
+  color: #94a3b8;
+  font-size: 12px;
+}
+
+.history-panel {
+  margin-top: 12px;
+  border-top: 1px dashed var(--border);
+  padding-top: 12px;
+}
+
+.history-panel h4 {
+  margin: 0 0 8px;
+  font-size: 13px;
+  color: #526070;
+}
+
+.history-panel ol {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 6px;
+}
+
+.history-panel li {
+  display: grid;
+  grid-template-columns: 180px 1fr 1fr;
+  gap: 10px;
+  font-size: 13px;
+  padding: 8px 10px;
+  border-radius: 6px;
+  background: #f8fafc;
+  font-variant-numeric: tabular-nums;
+}
+
+.history-current {
+  outline: 1px solid color-mix(in srgb, var(--primary) 35%, var(--border));
+  background: #f5f8ff !important;
+}
+
+.history-date {
+  color: #334155;
+  font-weight: 600;
+}
+
+.current-dot {
+  font-style: normal;
+  margin-left: 6px;
+  color: var(--primary);
+  font-size: 11px;
+}
+
+.empty-hint {
+  color: #64748b;
+  padding: 24px 0;
+  text-align: center;
+}
+
 .record-card {
   display: grid;
-  grid-template-columns: 56px 1fr;
-  gap: 16px;
-  align-items: center;
+  gap: 12px;
   border: 1px solid var(--border);
   border-radius: 8px;
   padding: 16px;
@@ -267,7 +623,27 @@ input {
     grid-template-columns: 1fr;
   }
 
-  .field-grid {
+  .field-grid,
+  .form-meta,
+  .eyes-row,
+  .eye-grid {
     grid-template-columns: 1fr;
+  }
+
+  .eye-row {
+    grid-template-columns: 1fr;
+    gap: 6px;
+  }
+
+  .history-panel li {
+    grid-template-columns: 1fr;
+  }
+
+  .record-head {
+    grid-template-columns: 46px 1fr;
+  }
+
+  .history-toggle {
+    grid-column: 1 / -1;
   }
 }
